@@ -5,7 +5,7 @@
 	* genera_tablas.py
 	* consulta_datos1.py
 	* consulta_datos2.py
-	* consulta_datos3.py
+	* consulta_datos3.py	
 	* consulta_datos4.py
 * Crear un archivo llamado ingreso_datos.py que permita guardar información en las entidades Club y Jugador.
 	* Los registros de la clase Club se deben obtener de la carpeta data y el archivo datos_clubs.txt.
