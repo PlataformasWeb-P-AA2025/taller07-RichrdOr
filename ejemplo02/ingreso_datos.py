@@ -2,40 +2,42 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import pandas as pd
 
-# se importa la clase(s) del
-# archivo genera_tablas
+# se importa la clase(s) del archivo genera_tablas
 from genera_tablas import Club, Jugador
 
 # se importa información del archivo configuracion
 from configuracion import cadena_base_datos
-# se genera enlace al gestor de base de
-# datos
-# para el ejemplo se usa la base de datos
-# sqlite
-engine = create_engine(cadena_base_datos)
 
+# Se genera enlace al gestor de base de datos
+engine = create_engine(cadena_base_datos)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-data_clubs = pd.read_csv("./data/datos_clubs.txt", delimiter =';', nombres = ["nombre", "deporte", "fundacion"]) #Ruta del csvs que tiene informacion de los clubs
+# Cargar datos desde los archivos
+data_clubs = pd.read_csv("./data/datos_clubs.txt", delimiter=';', names=["nombre", "deporte", "fundacion"]) #data de los clubs 
+data_jugadores = pd.read_csv("./data/datos_jugadores.txt", delimiter=';', names=["nombre_club", "posicion", "dorsal", "nombre"]) #data de los jugadores
 
-data_jugadores = pd.read_csv("./data/datos_jugadores.txt", delimiter =';', nombres = ["nombre_club", "posicion", "dorsal", "nombre"]) # Ruta del csv que tiene informacion de los jugadores
-
-
-for e in data_clubs.iterrows():
+# Ingresar los clubs
+for index, row in data_clubs.iterrows():
     club = Club()
-    club.nombre 
-    club.deporte 
-    club.fundacion 
+    club.nombre = row["nombre"]
+    club.deporte = row["deporte"]
+    club.fundacion = int(row["fundacion"])
     session.add(club)
 
-for j in data_jugadores.iterrows():
+# Ingresar los jugadores
+for index, row in data_jugadores.iterrows():
     jugador = Jugador()
-    jugador.nombre 
-    jugador.dorsal 
-    jugador.posicion
-    session.add(jugador)
+    jugador.nombre = row["nombre"]
+    jugador.dorsal = int(row["dorsal"])
+    jugador.posicion = row["posicion"]
 
-# se confirma las transacciones
+    club = session.query(Club).filter_by(nombre=row["nombre_club"]).one_or_none()
+    if club:
+        jugador.club = club
+        session.add(jugador)
+    else:
+        print("No tiene equipo")
+        
+# Confirmar las transacciones
 session.commit()
-    
